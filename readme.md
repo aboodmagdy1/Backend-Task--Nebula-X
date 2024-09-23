@@ -17,6 +17,7 @@ Backend task for a Junior Backend Developer position at Nebula X Company.
 
 - **Product API Management**: Create, Update, Edit, Delete
 - **Cart API Management**: Add, Modify, Display
+- **Postman Collection**: find it in Product_Cart_API.postman_collection.json file
 
 ## Solution
 
