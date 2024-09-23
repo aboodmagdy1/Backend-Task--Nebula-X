@@ -31,7 +31,17 @@ app.all("*", (req, res, next) => {
 // Global error handler
 app.use(globalErrorHandler);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Mode : ${process.env.NODE_ENV}`);
   console.log(`Server is running on port ${port}`);
+});
+
+// Event : unhandled Rejection Error [outside express like : DB connection ,...]
+process.on("unhandledRejection", (err) => {
+  console.log(err.name, err.message);
+  // to shut down any pending requests
+  server.close(() => {
+    console.error("UNHANDLED REJECTION! Shutting down...");
+    process.exit(1);
+  });
 });
