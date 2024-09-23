@@ -1,4 +1,6 @@
 const Product = require("../models/product.model");
+const ApiError = require("../utils/apiError.class");
+const asyncHandler = require("express-async-handler");
 
 const handleImageUrl = (req, res, next) => {
   if (req.file) {
@@ -12,109 +14,93 @@ const handleImageUrl = (req, res, next) => {
 
 // @desc Create  product
 // @route POST /api/products/
-const createProduct = async (req, res) => {
+const createProduct = asyncHandler(async (req, res, next) => {
   const { name, price, quantity, image, salePrice } = req.body;
-  try {
-    const product = await Product.create({
-      name,
-      price,
-      quantity,
-      image,
-      salePrice,
-    });
-    res.status(201).json(product);
-  } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ message: "Server Error" });
+
+  const product = await Product.create({
+    name,
+    price,
+    quantity,
+    image,
+    salePrice,
+  });
+  if (!product) {
+    return next(new ApiError(400, " Error Creating Product"));
   }
-};
+  res.status(201).json(product);
+});
 
 // @desc update some   product fields
 // @route PATCH /api/products/:id
-const updateProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
+const updateProduct = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
 
-    // Only allow specific fields to be updated
-    const { name, price, quantity, image, salePrice } = req.body;
+  // Only allow specific fields to be updated
+  const { name, price, quantity, image, salePrice } = req.body;
 
-    // update product
-    const product = await Product.findById(id);
+  // update product
+  const product = await Product.findById(id);
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    // update field and if not provided keep the old value
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.quantity = quantity || product.quantity;
-    product.image = image || product.image;
-    product.salePrice = salePrice || product.salePrice;
-
-    await product.save();
-
-    res.status(200).json(product);
-  } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ message: "Server Error" });
+  if (!product) {
+    return next(new ApiError(404, `No product with this id : ${id}  `));
   }
-};
+
+  // update field and if not provided keep the old value
+  product.name = name || product.name;
+  product.price = price || product.price;
+  product.quantity = quantity || product.quantity;
+  product.image = image || product.image;
+  product.salePrice = salePrice || product.salePrice;
+
+  await product.save();
+  res.status(200).json(product);
+});
 
 // @desc update all   product fields
 // @route PUT  /api/products/:id
-const editProduct = async (req, res) => {
+const editProduct = asyncHandler(async (req, res, next) => {
   // find product and update all fields
-  try {
-    const { id } = req.params;
 
-    // Only allow specific fields to be updated
-    const { name, price, quantity, image, salePrice } = req.body;
-    if (salePrice == undefined) {
-      salePrice = 0;
-    }
+  const { id } = req.params;
 
-    const updatedProduct = await Product.findOneAndUpdate(
-      { _id: id },
-      { name, price, quantity, image, salePrice },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    res.status(200).json(updatedProduct);
-  } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ message: "Server Error" });
+  // Only allow specific fields to be updated
+  const { name, price, quantity, image, salePrice } = req.body;
+  if (salePrice == undefined) {
+    salePrice = 0;
   }
-};
+
+  const updatedProduct = await Product.findOneAndUpdate(
+    { _id: id },
+    { name, price, quantity, image, salePrice },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!updatedProduct) {
+    return next(new ApiError(404, `No product with this id : ${id}  `));
+  }
+
+  res.status(200).json(updatedProduct);
+});
 
 // @desc delete   product
 // @route Delete  /api/products/:id
-const deleteProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
+const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-    const product = await Product.findOneAndDelete({ _id: id });
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    res.status(200).json({ message: "Product deleted" });
-  } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ message: "Server Error" });
+  const product = await Product.findOneAndDelete({ _id: id });
+  if (!product) {
+    return next(new ApiError(404, `No product with this id : ${id}  `));
   }
-};
+
+  res.status(200).json({ message: "Product deleted" });
+});
 
 // @desc Get all products
 // @route GET /api/products
-const getProducts = async (req, res) => {
+const getProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find({});
     return res.json(products);
@@ -122,23 +108,19 @@ const getProducts = async (req, res) => {
     console.error("Error: ", error);
     res.status(500).json({ message: "Server Error" });
   }
-};
+});
 
 // @desc Get  product by id
 // @route GET /api/products/:id
-const getProduct = async (req, res) => {
+const getProduct = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  try {
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res.status(200).json(product);
-  } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ message: "Server Error" });
+
+  const product = await Product.findById(id);
+  if (!product) {
+    return next(new ApiError(404, `No product with this id : ${id}  `));
   }
-};
+  res.status(200).json(product);
+});
 
 module.exports = {
   getProducts,

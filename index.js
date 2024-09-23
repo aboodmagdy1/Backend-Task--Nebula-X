@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 const ApiError = require("./utils/apiError.class");
+const globalErrorHandler = require("./middlewares/errorHandling.middleware");
 const productRoutes = require("./routes/product.routes");
 const cartRoutes = require("./routes/cart.routes");
 const connectDB = require("./configs/database");
@@ -28,18 +29,9 @@ app.all("*", (req, res, next) => {
 });
 
 // Global error handler
-app.use((error, req, res, next) => {
-  error.statusCode = error.statusCode || 500;
-  error.status = error.status || "error";
-
-  res.status(error.statusCode).json({
-    status: error.status,
-    error,
-    message: error.message,
-    stack: error.stack,
-  });
-});
+app.use(globalErrorHandler);
 
 app.listen(port, () => {
+  console.log(`Mode : ${process.env.NODE_ENV}`);
   console.log(`Server is running on port ${port}`);
 });
