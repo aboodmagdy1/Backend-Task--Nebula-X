@@ -1,13 +1,16 @@
+const path = require("path");
 require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
-const path = require("path");
+const morgan = require("morgan");
 
 const ApiError = require("./utils/apiError.class");
 const globalErrorHandler = require("./middlewares/errorHandling.middleware");
 const productRoutes = require("./routes/product.routes");
 const cartRoutes = require("./routes/cart.routes");
 const connectDB = require("./configs/database");
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -18,6 +21,9 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "uploads")));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 // API Routes
 app.use("/api/products", productRoutes);
