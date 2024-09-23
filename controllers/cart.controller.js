@@ -22,7 +22,7 @@ const updateCartTotals = async (cart) => {
   });
 
   cart.subtotal = subtotal;
-  cart.total = subtotal;
+  cart.total = subtotal; // if there is a discount or shipping cost, update the total accordingly
 
   return cart;
 };

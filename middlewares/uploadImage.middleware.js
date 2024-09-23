@@ -1,11 +1,18 @@
-const multer = require("multer");
+const fs = require("fs");
 const path = require("path");
+const multer = require("multer");
 
 // return multer upload instance
 const multerOptions = () => {
+  const uploadDir = path.join(__dirname, "../uploads");
+
+  // Check if 'uploads' directory exists, if not, create it
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
   const multerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, "../uploads")); // Save to the "uploads" directory
+      cb(null, uploadDir); // Save to the "uploads" directory
     },
     filename: (req, file, cb) => {
       const ext = path.extname(file.originalname);
