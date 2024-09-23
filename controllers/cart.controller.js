@@ -7,12 +7,9 @@ const asyncHandler = require("express-async-handler");
 const updateCartTotals = async (cart) => {
   let subtotal = 0;
 
-  // Fetch all product details in parallel using Promise.all
-  const productPromises = cart.items.map((item) =>
-    Product.findById(item.product)
-  );
-
-  const products = await Promise.all(productPromises);
+  // Baatch Query : get all products in one query
+  const productIds = cart.items.map((item) => item.product);
+  const products = await Product.findById({ _id: { $in: productIds } });
 
   // Update the prices and subtotal
   cart.items.forEach((item, index) => {
