@@ -64,7 +64,7 @@ const editProduct = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   // Only allow specific fields to be updated
-  const { name, price, quantity, image, salePrice } = req.body;
+  let { name, price, quantity, image, salePrice } = req.body;
   if (salePrice == undefined) {
     salePrice = 0;
   }
@@ -87,7 +87,7 @@ const editProduct = asyncHandler(async (req, res, next) => {
 
 // @desc delete   product
 // @route Delete  /api/products/:id
-const deleteProduct = asyncHandler(async (req, res) => {
+const deleteProduct = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const product = await Product.findOneAndDelete({ _id: id });
@@ -100,7 +100,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 // @desc Get all products
 // @route GET /api/products
-const getProducts = asyncHandler(async (req, res) => {
+const getProducts = asyncHandler(async (req, res, next) => {
   try {
     const products = await Product.find({});
     return res.json(products);
