@@ -10,7 +10,6 @@ Backend task for a Junior Backend Developer position at Nebula X Company.
 - [Solution](#solution)
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Technologies](#technologies)
 
 ## Requirements
