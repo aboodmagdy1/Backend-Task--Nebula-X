@@ -22,14 +22,14 @@ Backend task for a Junior Backend Developer position at Nebula X Company.
 
 ### Product API Routes
 
-| Method | Endpoint           | Description                   | Request Body/Params                                              |
-| ------ | ------------------ | ----------------------------- | ---------------------------------------------------------------- |
-| GET    | `api/products`     | Get a list of all products    | N/A                                                              |
-| GET    | `api/products/:id` | Get a product by its ID       | `id` (URL param)                                                 |
-| POST   | `api/products`     | Create a new product          | `{ name, price, quantity, image ,salePrice}`                     |
-| PUT    | `api/products/:id` | Edit entire product by its ID | `{ name, price, quantity, image ,salePrice }` , `id` (URL param) |
-| PATCH  | `api/products/:id` | Update a product by its ID    | `{ name ,price ,.... }` , `id` (URL param)                       |
-| DELETE | `api/products/:id` | Delete a product by its ID    | `id` (URL param)                                                 |
+| Method | Endpoint           | Description                   | Request Body/Params                                                         |
+| ------ | ------------------ | ----------------------------- | --------------------------------------------------------------------------- |
+| GET    | `api/products`     | Get a list of all products    | N/A                                                                         |
+| GET    | `api/products/:id` | Get a product by its ID       | `id` (URL param)                                                            |
+| POST   | `api/products`     | Create a new product          | `{ name, price, quantity, image ,salePrice}`(Form Data)                     |
+| PUT    | `api/products/:id` | Edit entire product by its ID | `{ name, price, quantity, image ,salePrice }` (Form Data), `id` (URL param) |
+| PATCH  | `api/products/:id` | Update a product by its ID    | `{ name ,price ,.... }`(Form Data) , `id` (URL param)                       |
+| DELETE | `api/products/:id` | Delete a product by its ID    | `id` (URL param)                                                            |
 
 ### Cart API Routes
 
